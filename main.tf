@@ -52,27 +52,6 @@ resource "aws_security_group" "jenkins_sg" {
   }
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["*al2023-ami-2023.6.*-kernel-6.1-x86_64*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  owners = ["amazon"] # Canonical
-}
-
 resource "aws_iam_role" "test_role" {
   name = "test_role"
 
@@ -118,7 +97,7 @@ EOF
 
 resource "aws_instance" "web" {
   ami             = data.aws_ami.amazon_linux.id
-  instance_type   = "t2.xlarge" 
+  instance_type   = "t2.micro" 
   key_name        = var.key_name
   iam_instance_profile = "${aws_iam_instance_profile.test_profile.name}"
   security_groups = [aws_security_group.jenkins_sg.name]
@@ -127,4 +106,3 @@ resource "aws_instance" "web" {
     Name = "Jenkins"
   }
 }
-
